@@ -37,7 +37,7 @@ if( ! defined('DATALIFEENGINE') ) {
 	  
 	$setting_res = $db->super_query("SELECT * FROM ".PREFIX."_vip_setting where id = '1'");
 	
-	$client = new nusoap_client('https://www.zarinpal.com/pg/services/WebGate/wsdl', 'wsdl');
+	$client = new nusoap_client('https://de.zarinpal.com/pg/services/WebGate/wsdl', 'wsdl');
 	$result = $client->call("PaymentVerification", array(
 		array(
 					'MerchantID'	 => $MID ,
@@ -166,7 +166,7 @@ $RefID = $result->RefID ;
 	  $MID = $setting_res['marchentid'];
 	  $price = $select_row['price'];
 	  
-	$client = new nusoap_client('https://www.zarinpal.com/pg/services/WebGate/wsdl', 'wsdl');
+	$client = new nusoap_client('https://de.zarinpal.com/pg/services/WebGate/wsdl', 'wsdl');
 	$desc = 'نام کاربری '.$member_id[name].' پلان '.$select_row[name]; 
 	$res = $client->call('PaymentRequest', array(
 			array(
