@@ -42,15 +42,15 @@ if( ! defined('DATALIFEENGINE') ) {
 		array(
 					'MerchantID'	 => $MID ,
 					'Authority' 	 => $au ,
-					'Amount'	 	=> $price
+					'Amount'	 => $price
 				)));
 	if ($rezarinpal['res'] == 1 )
 	$result = '-5';
-$RefID = $result->RefID ;
-	switch($result->Status){
+$RefID = $result['RefID '];
+	switch($result['Status']){
 
 		case '100' :
-			$prompt="فرايند بازگشت با موفقيت انجام شد";
+			$prompt="فرايند بازگشت با موفقيت انجام شد".;
 			break;
 		
 		case '-1' :
@@ -72,13 +72,13 @@ $RefID = $result->RefID ;
 			$prompt="زمان فعال جهت پرداخت صورت حساب طی شده و کاربر عمليات پرداخت را تکميل نکرده";
 			break;
 			DEFAULT :
-			$prompt="فرایند توسط خریدار منقضی گردید.";
+			$prompt="فرایند توسط خریدار منقضی گردید.".$result['Status'];
 			break;
 	}
 
 	
 
-	  if ( $result->Status == 100 ) {
+	  if ( $result['Status'] == 100 ) {
 
 		  $result_payment = "<div class=\"success\">
 		  	پرداخت و عضویت VIP شما با موفقیت انجام گردید.
@@ -116,7 +116,7 @@ $RefID = $result->RefID ;
 
 
 
-  	$db->query( "UPDATE " . PREFIX . "_vip_zarinpal set `au`='".$au."',`res`='".$result->Status."', `date`='".$date_zarinpal."', `vip_time`='".$time_end."', `show`='1' where userid='$member_id[user_id]'  limit 1");
+  	$db->query( "UPDATE " . PREFIX . "_vip_zarinpal set `au`='".$au."',`res`='".$result['Status']."', `date`='".$date_zarinpal."', `vip_time`='".$time_end."', `show`='1' where userid='$member_id[user_id]'  limit 1");
 	
 	$db->query( "UPDATE " . PREFIX . "_users set `viptime_plan`='".$time_end."', `viptime_start`='".$this_time."' where user_id='$member_id[user_id]' limit 1");
 
@@ -126,7 +126,7 @@ $RefID = $result->RefID ;
 
 	  } else {
 		$result_payment = "  <div class=\"success\">
-			خطا در پرداخت :  &nbsp;&nbsp; $prompt
+			خطا در پرداخت :  &nbsp;&nbsp; $prompt $result['Status']
 			<br>
 			لطفا مجددا تلاش نمایید.
 
@@ -170,18 +170,20 @@ $RefID = $result->RefID ;
 	$desc = 'نام کاربری '.$member_id[name].' پلان '.$select_row[name]; 
 	$res = $client->call('PaymentRequest', array(
 			array(
-					'MerchantID' 	=> $MID ,
+					'MerchantID' 		=> $MID ,
 					'Amount' 		=> $price ,
-					'Description' 	=> $desc ,
+					'Description' 		=> $desc ,
 					'Email' 		=> '' ,
 					'Mobile' 		=> '' ,
-					'CallbackURL' 	=> $GLOBALS["RedirectURL"]
+					'CallbackURL' 		=> $GLOBALS["RedirectURL"]
 
 					) ));
 	
 	//Redirect to URL You can do it also by creating a form
+if($res[Status]==100){
+	Header('Location: https://www.zarinpal.com/pg/StartPay/" . $res['Authority']');
 
-	Header('Location: https://www.zarinpal.com/pg/StartPay/" . $res->Authority);
+	
 	  
 
 
@@ -201,16 +203,15 @@ $RefID = $result->RefID ;
 
 
 HTML;
-
-
-	  echo '
+}else{
+	echo'ERR: '.res['Status']
+}
 	
-	';
 
 
 		}
 
-	  $db->query( "INSERT INTO " . PREFIX . "_vip_zarinpal set `userid`='".$member_id['user_id']."', `vip_panel`='".$id."', `au` = '".$res."', `price`='".$price."', `show`='0'");
+	  $db->query( "INSERT INTO " . PREFIX . "_vip_zarinpal set `userid`='".$member_id['user_id']."', `vip_panel`='".$id."', `au` = '".$res['Authority']."', `price`='".$price."', `show`='0'");
 
 
 
